@@ -3,6 +3,7 @@
 use App\Http\Controllers\HerramientasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('/register', [AuthController::class, 'registro']);
+Route::post('/login',    [AuthController::class, 'login']);
+
+
 Route::get('/herramientas',          [HerramientasController::class, 'index']);
 Route::get('/herramientas/{id}',     [HerramientasController::class, 'show']);
 Route::post('/herramientas',         [HerramientasController::class, 'store']);
@@ -26,6 +31,13 @@ Route::get('/categorias', fn() => response()->json([
     'datos' => \App\Models\Categoria::all()
 ]));
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout',       [AuthController::class, 'logout']);
+    Route::get('/user',          [AuthController::class, 'perfil']);
+    Route::put('/user',          [AuthController::class, 'actualizar']);
+    Route::post('/user/imagen',  [AuthController::class, 'actualizarAvatar']);
+    Route::put('/user/password', [AuthController::class, 'actualizarContrasena']);
 });
+
+

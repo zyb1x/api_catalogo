@@ -12,24 +12,31 @@ class Login extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table = 'Usuarios';
+    // protected $table = 'Usuarios';
 
-    public $timestamps = false;
+    // public $timestamps = false;
    
     protected $fillable = [
-        'correo',
-        'contrasena',
+        'name',
+        'email',
+        'password',
+        'imagen',
+    ];
+
+     protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     public function getAuthPassword()
     {
-        return $this->contrasena;
+        return $this->password;
     }
 
     
     public function getEmailForPasswordReset()
     {
-        return $this->correo;
+        return $this->email;
     }
 }
 
