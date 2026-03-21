@@ -19,6 +19,7 @@ class Herramientas extends Model
         'existencia',
         'estado',
         'disponible',
+        'precio',
         'imagen',
     ];
 

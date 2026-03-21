@@ -83,11 +83,12 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required',
         ]);
 
-        $usuario = Usuarios::where('correo', $request->email)->first();
+        
+        $usuario = \App\Models\Usuarios::where('correo', $request->email)->first();
 
         if (!$usuario) {
             return back()->withErrors([
@@ -95,14 +96,34 @@ class LoginController extends Controller
             ])->withInput();
         }
 
-        if (!Hash::check($request->password, $usuario->contrasena)) {
+        if (!\Illuminate\Support\Facades\Hash::check($request->password, $usuario->contrasena)) {
             return back()->withErrors([
                 'error' => 'La contraseña es incorrecta.'
             ])->withInput();
         }
 
-        Auth::guard('usuarios')->login($usuario);
+        \Illuminate\Support\Facades\Auth::guard('usuarios')->login($usuario);
         $request->session()->regenerate();
+
+       
+        try {
+            $respuesta = \Illuminate\Support\Facades\Http::post(
+                config('app.api_url') . '/api/login',
+                [
+                    'email'    => $request->email,
+                    'password' => $request->password,
+                ]
+            );
+
+            if ($respuesta->successful()) {
+                $datos = $respuesta->json();
+                session([
+                    'api_token'   => $datos['access_token'],
+                    'api_user_id' => $datos['user']['id'],
+                ]);
+            }
+        } catch (\Exception $e) {
+        }
 
         return redirect('/inicio');
     }

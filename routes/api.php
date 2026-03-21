@@ -4,6 +4,7 @@ use App\Http\Controllers\HerramientasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PrestamosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user',          [AuthController::class, 'actualizar']);
     Route::post('/user/imagen',  [AuthController::class, 'actualizarAvatar']);
     Route::put('/user/password', [AuthController::class, 'actualizarContrasena']);
+
+    Route::get('/prestamos',              [PrestamosController::class, 'index']);
+    Route::get('/prestamos/{id}',         [PrestamosController::class, 'show']);
+    Route::post('/prestamos',              [PrestamosController::class, 'store']);
+    Route::patch('/prestamos/{id}/cancelar', [PrestamosController::class, 'cancelar']);
 });
-
-
