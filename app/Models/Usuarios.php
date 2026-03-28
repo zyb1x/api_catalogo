@@ -12,7 +12,7 @@ class Usuarios extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table = 'Usuarios';
+    protected $table = 'usuarios';
     // protected $primaryKey = 'id_usuario'; se cambio en la base de datos a id
     public $incrementing = true;
     protected $keyType = 'int';

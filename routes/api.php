@@ -44,4 +44,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/prestamos/{id}',         [PrestamosController::class, 'show']);
     Route::post('/prestamos',              [PrestamosController::class, 'store']);
     Route::patch('/prestamos/{id}/cancelar', [PrestamosController::class, 'cancelar']);
+
+    Route::patch('/prestamos/{id}/pago', [PrestamosController::class, 'registrarPago']);
 });
+
+// Rutas para PayPal
+Route::post('/paypal/pago', [\App\Http\Controllers\PayPalController::class, 'pago']);
+Route::post('/paypal/procesar-pago', [\App\Http\Controllers\PayPalController::class, 'procesarPago']);      
+Route::get('/paypal/cancelar', [\App\Http\Controllers\PayPalController::class, 'cancelarPago']); 

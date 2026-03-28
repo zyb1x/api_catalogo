@@ -54,7 +54,6 @@ class PrestamosController extends Controller
     }
 
     // POST /api/prestamos
-    // Body: { items: [{id_herramienta, cantidad}] }
     public function store(Request $request)
     {
         $validar = Validator::make($request->all(), [
@@ -80,7 +79,6 @@ class PrestamosController extends Controller
         DB::beginTransaction();
 
         try {
-            // Verificar existencias antes de tocar nada
             foreach ($request->items as $item) {
                 $herramienta = Herramientas::find($item['id_herramienta']);
 
@@ -103,7 +101,6 @@ class PrestamosController extends Controller
                 }
             }
 
-            // Crear préstamo sin id_empleado
             $prestamo = Prestamos::create([
                 'id_usuario'      => $request->user()->id,
                 'estatus_general' => 'Activo',
@@ -205,5 +202,30 @@ class PrestamosController extends Controller
                 'error'     => 'Error al cancelar: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    // PATCH /api/prestamos/{id}/pago
+    public function registrarPago(Request $request, $id)
+    {
+        $prestamo = Prestamos::where('id_prestamo', $id)
+            ->where('id_usuario', $request->user()->id)
+            ->first();
+
+        if (!$prestamo) {
+            return response()->json([
+                'resultado' => false,
+                'error'     => 'Pedido no encontrado.',
+            ], 404);
+        }
+
+        $prestamo->transaccion_id = $request->input('transaccion_id');
+        $prestamo->estado_pago    = $request->input('estado_pago', 'COMPLETADO');
+        $prestamo->save();
+
+        return response()->json([
+            'resultado' => true,
+            'datos'     => $prestamo,
+            'error'     => '',
+        ], 200);
     }
 }
